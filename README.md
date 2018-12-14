@@ -20,6 +20,7 @@ Other:
 * Cardboard
 * Small screws
 * Drill and assorted bits
+* Various small pliers, screwdriver, common tools
 
 # Construction
 
