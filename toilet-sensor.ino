@@ -1,3 +1,20 @@
+// User-defined configuration
+
+// Milliseconds ping time when the cistern is full
+#define top 300 //todo change to 400
+
+// Milliseconds ping time when the cistern is empty
+#define bottom 1900
+
+// Milliseconds between pings
+#define sense_frequency 100
+
+
+
+
+
+// Fixed system configuration
+
 // 8x8 LED pin locations
 #define ROW_1 8
 #define ROW_2 5
@@ -20,11 +37,9 @@
 #define trigPin 1
 #define echoPin 0
 
-#define minDuration 360 // just for testing - should be 400
-#define maxDuration 1900
 
-#define sleepDelay 500
-#define flushDelay 100
+
+
 
 const byte rows[] = {
     ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8
@@ -52,9 +67,8 @@ const byte TICK[] = {
   B00100000,
   B00000000
 };
-//end screen
 
-long currentDelay = flushDelay;
+long currentDelay = sense_frequency;
 long cyclesInCurrentMode = 0;
 long cyclesSinceLastPulse = 0;
 long duration = 0;
@@ -89,24 +103,28 @@ void loop() {
 }
 
 void updateDisplay(long duration) {
-  if(inRange(duration)){
-    byte toDraw[8];
-
-    int range = maxDuration - minDuration;
-
-    int offset = duration - minDuration;
-
-    int fillLevel = range - offset;
+//  if(inRange(duration)){
+    drawFillLevel(duration);
     
-    double rounded = (double)fillLevel/range * 64;
-    buildDots(toDraw, rounded);
-    drawScreen(toDraw);
-    
-  }else if(isEmpty(duration)){
-    drawScreen(X);
-  }else if(isFull(duration)){
-    drawScreen(TICK);
-  }
+//  }else if(isEmpty(duration)){
+//    drawScreen(X);
+//  }else if(isFull(duration)){
+//    drawScreen(TICK);
+//  }
+}
+
+void drawFillLevel(long duration) {
+  double range = bottom - top;
+
+  double relativeFill = bottom - duration;
+  
+  double fractionalFill = (double)relativeFill/range;
+
+  int filledPixels = fractionalFill * 64;
+
+  byte toDraw[8];
+  buildDots(toDraw, filledPixels);
+  drawScreen(toDraw);
 }
 
 long sense() {
@@ -120,11 +138,11 @@ bool inRange(long duration) {
 }
 
 bool isEmpty(long duration) {
-  return duration > maxDuration;
+  return duration > bottom;
 }
 
 bool isFull(long duration) {
-  return duration < minDuration;
+  return duration < top;
 }
 
 long pulse() {
