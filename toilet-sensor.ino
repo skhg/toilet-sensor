@@ -1,7 +1,7 @@
 // User-defined configuration
 
 // Milliseconds ping time when the cistern is full
-#define top 300 //todo change to 400
+#define top 400
 
 // Milliseconds ping time when the cistern is empty
 #define bottom 1900
@@ -98,28 +98,23 @@ void loop() {
   }else{
     cyclesSinceLastPulse++;
   }
-
   updateDisplay(duration);
 }
 
 void updateDisplay(long duration) {
-//  if(inRange(duration)){
+  if(inRange(duration)){
     drawFillLevel(duration);
-    
-//  }else if(isEmpty(duration)){
-//    drawScreen(X);
-//  }else if(isFull(duration)){
-//    drawScreen(TICK);
-//  }
+  }else if(isEmpty(duration)){
+    drawScreen(X);
+  }else if(isFull(duration)){
+    drawScreen(TICK);
+  }
 }
 
 void drawFillLevel(long duration) {
   double range = bottom - top;
-
   double relativeFill = bottom - duration;
-  
   double fractionalFill = (double)relativeFill/range;
-
   int filledPixels = fractionalFill * 64;
 
   byte toDraw[8];
@@ -176,20 +171,15 @@ void buildDots(byte *screen, int count) {
     B11111110,
     B11111111};
 
-  int done = 0;
-  int row = 0;
-  
-  while(done < count){
-
-    if(count - done >=8){
-      ROWS[8 - row] = FILLER[8];
-      done += 8;
+  // Fill rows bottom to top, as a real toilet does
+  for(int i=7; i>=0; i--){
+    if(count >= 8){
+      ROWS[i] = FILLER[8];
+      count = count - 8;
     }else{
-      ROWS[8 - row] = FILLER[count - done];
-      done = count;
-    }
-
-    row++;
+      ROWS[i] = FILLER[count];
+      count = 0;
+    } 
   }
 
   copyScreenContents(ROWS, screen);
@@ -220,4 +210,3 @@ void  drawScreen(const byte buffer2[])
         // otherwise last row will intersect with next row
     }
 }
-//end screen
