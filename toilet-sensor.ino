@@ -1,4 +1,4 @@
-// setup screen
+// 8x8 LED pin locations
 #define ROW_1 8
 #define ROW_2 5
 #define ROW_3 10
@@ -7,7 +7,6 @@
 #define ROW_6 11
 #define ROW_7 A3
 #define ROW_8 13
-
 #define COL_1 A2
 #define COL_2 6
 #define COL_3 7
@@ -16,20 +15,17 @@
 #define COL_6 A0
 #define COL_7 A4
 #define COL_8 A5
-//setup screen
 
-
-
+// Ultrasound sensor pin locations
 #define trigPin 1
 #define echoPin 0
 
-#define minDuration 400
-#define maxDuration 1800
+#define minDuration 360 // just for testing - should be 400
+#define maxDuration 1900
 
 #define sleepDelay 500
 #define flushDelay 100
 
-//setup screen
 const byte rows[] = {
     ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8
 };
@@ -37,267 +33,15 @@ const byte col[] = {
   COL_1,COL_2, COL_3, COL_4, COL_5, COL_6, COL_7, COL_8
 };
 
-const byte ALL[] = {
-  B11111111,
-  B11111111,
-  B11111111,
-  B11111111,
-  B11111111,
-  B11111111,
-  B11111111,
-  B11111111};
-const byte EX[] = {
-  B00000000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00000000,
-  B00010000,
-  B00000000};
-const byte A[] = {
-  B00000000,
-  B00111100,
-  B01100110,
-  B01100110,
-  B01111110,
-  B01100110,
-  B01100110,
-  B01100110};
-const byte B[] = {
-  B01111000,
-  B01001000,
-  B01001000,
-  B01110000,
-  B01001000,
-  B01000100,
-  B01000100,
-  B01111100};
-const byte C[] = {
-  B00000000,
-  B00011110,
-  B00100000,
-  B01000000,
-  B01000000,
-  B01000000,
-  B00100000,
-  B00011110};
-const byte D[] = {
-  B00000000,
-  B00111000,
-  B00100100,
-  B00100010,
-  B00100010,
-  B00100100,
-  B00111000,
-  B00000000};
-const byte E[] = {
-  B00000000,
-  B00111100,
-  B00100000,
-  B00111000,
-  B00100000,
-  B00100000,
-  B00111100,
-  B00000000};
-const byte F[] = {
-  B00000000,
-  B00111100,
-  B00100000,
-  B00111000,
-  B00100000,
-  B00100000,
-  B00100000,
-  B00000000};
-const byte G[] = {
-  B00000000,
-  B00111110,
-  B00100000,
-  B00100000,
-  B00101110,
-  B00100010,
-  B00111110,
-  B00000000};
-const byte H[] = {
-  B00000000,
-  B00100100,
-  B00100100,
-  B00111100,
-  B00100100,
-  B00100100,
-  B00100100,
-  B00000000};
-const byte I[] = {
-  B00000000,
-  B00111000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00111000,
-  B00000000};
-const byte J[] = {
-  B00000000,
-  B00011100,
-  B00001000,
-  B00001000,
-  B00001000,
-  B00101000,
-  B00111000,
-  B00000000};
-const byte K[] = {
-  B00000000,
-  B00100100,
-  B00101000,
-  B00110000,
-  B00101000,
-  B00100100,
-  B00100100,
-  B00000000};
-const byte L[] = {
-  B00000000,
-  B00100000,
-  B00100000,
-  B00100000,
-  B00100000,
-  B00100000,
-  B00111100,
-  B00000000};
-const byte M[] = {
-  B00000000,
-  B00000000,
-  B01000100,
-  B10101010,
-  B10010010,
-  B10000010,
-  B10000010,
-  B00000000};
-const byte N[] = {
-  B00000000,
-  B00100010,
-  B00110010,
-  B00101010,
-  B00100110,
-  B00100010,
-  B00000000,
-  B00000000};
-const byte O[] = {
-  B00000000,
-  B00111100,
-  B01000010,
-  B01000010,
-  B01000010,
-  B01000010,
-  B00111100,
-  B00000000};
-const byte P[] = {
-  B00000000,
-  B00111000,
-  B00100100,
-  B00100100,
-  B00111000,
-  B00100000,
-  B00100000,
-  B00000000};
-const byte Q[] = {
-  B00000000,
-  B00111100,
-  B01000010,
-  B01000010,
-  B01000010,
-  B01000110,
-  B00111110,
-  B00000001};
-const byte R[] = {
-  B00000000,
-  B00111000,
-  B00100100,
-  B00100100,
-  B00111000,
-  B00100100,
-  B00100100,
-  B00000000};
-const byte S[] = {
-  B00000000,
-  B00111100,
-  B00100000,
-  B00111100,
-  B00000100,
-  B00000100,
-  B00111100,
-  B00000000};
-const byte T[] = {
-  B00000000,
-  B01111100,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00000000};
-const byte U[] = {
-  B00000000,
-  B01000010,
-  B01000010,
-  B01000010,
-  B01000010,
-  B00100100,
-  B00011000,
-  B00000000};
-const byte V[] = {
-  B00000000,
-  B00100010,
-  B00100010,
-  B00100010,
-  B00010100,
-  B00010100,
-  B00001000,
-  B00000000};
-const byte W[] = {
-  B00000000,
-  B10000010,
-  B10010010,
-  B01010100,
-  B01010100,
-  B00101000,
-  B00000000,
-  B00000000};
 const byte X[] = {
-  B00000000,
+  B10000001,
   B01000010,
   B00100100,
   B00011000,
   B00011000,
   B00100100,
   B01000010,
-  B00000000};
-const byte Y[] = {
-  B00000000,
-  B01000100,
-  B00101000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00010000,
-  B00000000};
-const byte Z[] = {
-  B00000000,
-  B00111100,
-  B00000100,
-  B00001000,
-  B00010000,
-  B00100000,
-  B00111100,
-  B00000000};
-const byte EMPTY[] = {
-  B00000000,
-  B00000000,
-  B00000000,
-  B00000000,
-  B00000000,
-  B00000000,
-  B00000000,
-  B00000000};
+  B10000001};
 const byte TICK[] = {
   B00000000,
   B00000001,
@@ -310,22 +54,10 @@ const byte TICK[] = {
 };
 //end screen
 
-
-
-enum fillStates {
-  EMPTYING,
-  FILLING,
-  FULL,
-  FULL_SLEEP
-};
-
-fillStates newState(long now, long prev, fillStates currentState);
-
-enum fillStates currentState = FULL;
-long prevDuration = minDuration;
 long currentDelay = flushDelay;
 long cyclesInCurrentMode = 0;
 long cyclesSinceLastPulse = 0;
+long duration = 0;
 
 void setup() {  
   Serial.begin (9600);
@@ -336,34 +68,33 @@ void setup() {
   for (byte i = 2; i <= 13; i++){
     pinMode(i, OUTPUT);
   }  
+  
   pinMode(A0, OUTPUT);
   pinMode(A1, OUTPUT);
   pinMode(A2, OUTPUT);
   pinMode(A3, OUTPUT);
   pinMode(A4, OUTPUT);
   pinMode(A5, OUTPUT);
- //end screen
 }
 
 void loop() {
   if(cyclesSinceLastPulse > currentDelay){
-    sense();
+    duration = sense();
     cyclesSinceLastPulse = 0;
   }else{
     cyclesSinceLastPulse++;
   }
 
-  updateDisplay();
-  
+  updateDisplay(duration);
 }
 
-void updateDisplay() {
-  if(inRange(prevDuration)){
+void updateDisplay(long duration) {
+  if(inRange(duration)){
     byte toDraw[8];
 
     int range = maxDuration - minDuration;
 
-    int offset = prevDuration - minDuration;
+    int offset = duration - minDuration;
 
     int fillLevel = range - offset;
     
@@ -371,77 +102,17 @@ void updateDisplay() {
     buildDots(toDraw, rounded);
     drawScreen(toDraw);
     
-  }else if(isEmpty(prevDuration)){
+  }else if(isEmpty(duration)){
     drawScreen(X);
-  }else if(isFull(prevDuration)){
+  }else if(isFull(duration)){
     drawScreen(TICK);
   }
 }
 
-void sense() {
+long sense() {
   long duration = pulse();
-
   Serial.println(duration);
-
-  fillStates nextState = newState(duration, prevDuration, currentState);
-
-  if(nextState != currentState){
-      switch(nextState) {
-        case EMPTYING: break;
-        case FILLING: break;
-        case FULL: break;
-        case FULL_SLEEP: break;
-      }
-  }
-
-  currentState = nextState;
-  prevDuration = duration;
-}
-
-fillStates newState(long now, long prev, fillStates currentState) {
-
-  switch(currentState) {
-    case EMPTYING:
-      // if EMPTYING and level is now higher than previous level
-      // go to FILLING mode
-      if(isHigher(now, prev)) {
-        return FILLING;
-      }
-      break;
-    case FILLING:
-      // if FULL or SLEEP MODE or FILLING and level is now lower than previous level
-      // go to EMPTYING mode
-      if(isLower(now, prev)) {
-        return EMPTYING;
-      }
-      // if FILLING and level now exceeds the max level
-      // go to FULL mode
-      else if(isFull(now)) {
-        return FULL;
-      }
-      break;
-    case FULL:
-      // if FULL and entered state more than 30 seconds ago and is still full
-      // go to sleep mode 
-      if(isFull(now) && cyclesInCurrentMode > 30000) {
-        return FULL_SLEEP;
-      }
-      // if FULL or SLEEP MODE or FILLING and level is now lower than previous level
-      // go to EMPTYING mode
-      else if(isLower(now, prev)) {
-        return EMPTYING;
-      }
-      break;
-    case FULL_SLEEP:
-      // if FULL or SLEEP MODE or FILLING and level is now lower than previous level
-      // go to EMPTYING mode
-      if(isLower(now, prev)) {
-        return EMPTYING;
-      }
-      break;
-  }
-
-  return currentState;
+  return duration;
 }
 
 bool inRange(long duration) {
@@ -456,14 +127,6 @@ bool isFull(long duration) {
   return duration < minDuration;
 }
 
-bool isLower(long now, long prev) {
-  return now > prev && inRange(now);
-}
-
-bool isHigher(long now, long prev) {
-  return now <= prev && inRange(now);
-}
-
 long pulse() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -472,10 +135,6 @@ long pulse() {
   digitalWrite(trigPin, LOW);
   return pulseIn(echoPin, HIGH);
 }
-
-
-
-//setup screen
 
 void buildDots(byte *screen, int count) {
   byte ROWS[] = {
@@ -535,10 +194,7 @@ void  drawScreen(const byte buffer2[])
           // if You set (~buffer2[i] >> a) then You will have positive
           digitalWrite(col[a], (~buffer2[i] >> a) & 0x01); // initiate whole column
           
-          delayMicroseconds(100);       // uncoment deley for diferent speed of display
-          //delayMicroseconds(1000);
-          //delay(10);
-          //delay(100);
+          delayMicroseconds(50);       // uncoment deley for diferent speed of display
           
           digitalWrite(col[a], 1);      // reset whole column
         }
