@@ -48,6 +48,15 @@ const byte col[] = {
   COL_1,COL_2, COL_3, COL_4, COL_5, COL_6, COL_7, COL_8
 };
 
+const byte EMPTY[] = {
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000};
 const byte X[] = {
   B10000001,
   B01000010,
@@ -105,7 +114,7 @@ void updateDisplay(long duration) {
   if(inRange(duration)){
     drawFillLevel(duration);
   }else if(isEmpty(duration)){
-    drawScreen(X);
+    drawScreen(EMPTY);
   }else if(isFull(duration)){
     drawScreen(TICK);
   }
