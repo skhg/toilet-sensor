@@ -44,6 +44,10 @@ Once the sensor and display are installed, the readings must be calibrated, sinc
 
 ![Flush graph](docs/flush-graph.png "Flush graph")
 
+Due to the confined space within the cistern and the natural movement of the water as it refills, the data at the start and end of the refill cycle is quite noisy. Ideally this would be solved by taking higher frequency measurements and smoothing for an average value, but this can come later.
+
+For simplicity we can take this example and take the `top` value as `400` and the `bottom` value as `1900`. These values are configured at the top of the code file.
+
 ## References
 These tutorials and guides proved useful during the project
 
