@@ -35,7 +35,7 @@ This was done in 2 parts, with the sensor adapter and the display module built s
 ### Sensor
 Within the toilet cistern I found that there were 2 removable plastic clips which hold a protective plate onto it's front. Each of these had a small pre-existing hole bored through it, which was ideal for mounting the sensor in the right direction. To this plastic clip I attached an angled piece of metal, and the mini breadboard on the other end. The sensor sits here facing downward and "secured" by a tie-wrap. I cut open an Ethernet cable and used 4 of the inner wires to connect the breadboard.
 
-<img src="docs/sensor-1.jpg" width="400" title="Sensor adapter"> <img src="docs/sensor-2.jpg" width="400" title="Installed - close up"> <img src="docs/sensor-3.jpg" width="400" title="Installed - wider view">
+<img src="docs/sensor-1.jpg" width="425" title="Sensor adapter"> <img src="docs/sensor-2.jpg" width="425" title="Installed - close up"> <img src="docs/sensor-3.jpg" width="425" title="Installed - wider view">
 
 
 
