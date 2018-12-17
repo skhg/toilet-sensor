@@ -1,7 +1,7 @@
 # toilet-sensor
 An Arduino-based toilet cistern monitor.
 
-# Idea
+## Idea
 Sometimes the toilet needs an extra flush, and the cistern takes a while to fill up. How full is it? How long should I wait? 
 
 These are important questions.
@@ -10,7 +10,7 @@ Finally, we have an answer.
 
 ![Installed sensor](docs/installed.jpg "Installed sensor")
 
-# Materials required
+## Materials required
 Electronics:
 * 1 Arduino
 * 1 8x8 LED matrix
@@ -29,10 +29,23 @@ Other:
 * Drill and assorted bits
 * Various small pliers, screwdriver, common tools
 
-# Construction
+## Construction
 
-# Installation
+## Installation
 
-# Code
+## Code
+See the full Arduino C++ code in [toilet-sensor.ino](toilet-sensor.ino). 
 
+## Circuit
 ![Circuit diagram](docs/wiring.jpg "Circuit diagram")
+
+## Calibration
+Once the sensor and display are installed, the readings must be calibrated, since we don't know exactly how high or low the water level will be in comparison to our test runs. This can be done very easily by capturing the serial output of the Arduino and exporting it to a spreadsheet.
+
+![Flush graph](docs/flush-graph.jpg "Flush graph")
+
+## References
+These tutorials and guides proved useful during the project
+
+* [Programming 8x8 LED Matrix](https://create.arduino.cc/projecthub/SAnwandter1/programming-8x8-led-matrix-23475a)
+* [Simple Arduino and HC-SR04 Example](https://www.instructables.com/id/Simple-Arduino-and-HC-SR04-Example/)
