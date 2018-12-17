@@ -42,7 +42,7 @@ See the full Arduino C++ code in [toilet-sensor.ino](toilet-sensor.ino).
 ## Calibration
 Once the sensor and display are installed, the readings must be calibrated, since we don't know exactly how high or low the water level will be in comparison to our test runs. This can be done very easily by capturing the serial output of the Arduino and exporting it to a spreadsheet.
 
-![Flush graph](docs/flush-graph.jpg "Flush graph")
+![Flush graph](docs/flush-graph.png "Flush graph")
 
 ## References
 These tutorials and guides proved useful during the project
