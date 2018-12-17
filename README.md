@@ -10,6 +10,8 @@ Finally, we have answers.
 
 ![Installed sensor](docs/installed.jpg "Installed sensor")
 
+![Sensor at work](https://media.giphy.com/media/assSsbMZdXRspg16uB/giphy.gif "Sensor at work")
+
 ## Materials required
 Electronics:
 * 1 Arduino [Leonardo](https://www.amazon.co.uk/gp/product/B00CXFJYPM/ref=oh_aui_detailpage_o01_s03?ie=UTF8&psc=1)
