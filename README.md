@@ -6,7 +6,7 @@ Sometimes the toilet needs an extra flush, and the cistern takes a while to fill
 
 These are important questions.
 
-Finally, we have an answer.
+Finally, we have answers.
 
 ![Installed sensor](docs/installed.jpg "Installed sensor")
 
