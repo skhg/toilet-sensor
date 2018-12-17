@@ -48,7 +48,7 @@ Next I moved on to mounting the components in a case. This was a repurposed 200g
 
 <img src="docs/case.jpg" width="425" title="Case">
 
-And connecting them with ribbon cable:
+And connecting them with some 12cm lengths of ribbon cable:
 
 <img src="docs/ribbon-1.jpg" width="425" title="Ribbon cable"> <img src="docs/ribbon-2.jpg" width="425" title="Ribbon cable - in the container">
 
@@ -65,13 +65,13 @@ See the full Arduino C++ code in [toilet-sensor.ino](toilet-sensor.ino).
 This can also be viewed in the [Fritzing](http://fritzing.org/) software using the [diagram.fzz](diagram.fzz) file. 
 
 ## Calibration
-Once the sensor and display are installed, the readings must be calibrated, since we don't know exactly how high or low the water level will be in comparison to our test runs. This can be done very easily by capturing the serial output of the Arduino and exporting it to a spreadsheet.
+Once the sensor and display were installed, the readings needed to be calibrated, since there's no way to know exactly how high or low the water level will be in comparison to the test runs (The sensor angle might have shifted during installation, etc). Calibration can be done very easily by capturing the serial output of the Arduino and exporting it to a spreadsheet.
 
 ![Flush graph](docs/flush-graph.png "Flush graph")
 
 Due to the confined space within the cistern and the natural movement of the water as it refills, the data at the start and end of the refill cycle is quite noisy. Ideally this would be solved by taking higher frequency measurements and smoothing for an average value, but this can come later.
 
-For simplicity we can take this example and take the `top` value as `400` and the `bottom` value as `1900`. These values are configured at the top of the code file.
+For simplicity, in this example I take the `top` value as `400` and the `bottom` value as `1900`. These values are configured at the top of the code file.
 
 ## References
 These tutorials and guides proved useful during the project
