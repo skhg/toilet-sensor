@@ -2,6 +2,13 @@
 An Arduino-based toilet cistern monitor.
 
 # Idea
+Sometimes the toilet needs an extra flush, and the cistern takes a while to fill up. How full is it? How long should I wait? 
+
+These are important questions.
+
+Finally, we have an answer.
+
+![Installed sensor](docs/installed.jpg "Installed sensor")
 
 # Materials required
 Electronics:
