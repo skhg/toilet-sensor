@@ -10,7 +10,9 @@ Finally, we have answers.
 
 ![Installed sensor](docs/installed.jpg "Installed sensor")
 
-![Sensor at work](https://media.giphy.com/media/assSsbMZdXRspg16uB/giphy.gif "Sensor at work")
+Sensor at work:
+
+![Sensor at work](docs/giphy.gif "Sensor at work")
 
 ## Materials required
 Electronics:
