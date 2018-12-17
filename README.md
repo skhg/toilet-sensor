@@ -37,9 +37,11 @@ Within the toilet cistern I found that there were 2 removable plastic clips whic
 
 <img src="docs/sensor-1.jpg" width="425" title="Sensor adapter"> <img src="docs/sensor-2.jpg" width="425" title="Installed - close up"> <img src="docs/sensor-3.jpg" width="425" title="Installed - wider view">
 
+### Display
+Initially I prototyped the project using the Ethernet cable trailing out and everything hooked up to a breadboard:
 
+<img src="docs/prototype-1.jpg" width="425" title="Prototype - wide view"> <img src="docs/prototype-2.png" width="425" title="Prototype - close up">
 
-## Installation
 
 ## Code
 See the full Arduino C++ code in [toilet-sensor.ino](toilet-sensor.ino). 
