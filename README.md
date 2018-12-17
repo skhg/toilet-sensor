@@ -42,6 +42,19 @@ Initially I prototyped the project using the Ethernet cable trailing out and eve
 
 <img src="docs/prototype-1.jpg" width="425" title="Prototype - wide view"> <img src="docs/prototype-2.png" width="425" title="Prototype - close up">
 
+This was enough to prove the concept worked within the cistern and interference didn't occur with the sides of the tank.
+
+Next I moved on to mounting the components in a case. This was a repurposed 200g [Ferrero Rocher](https://www.amazon.de/Rocher-5er-Pack-200-Packung/dp/B00TYCAR26/ref=sr_1_4?ie=UTF8&qid=1545080462&sr=8-4&keywords=ferrero+rocher) box. I drilled two holes in the bottom (not visible here) large enough to admit the Ethernet cable and micro-USB power supply.
+
+<img src="docs/case.jpg" width="425" title="Case">
+
+And connecting them with ribbon cable:
+
+<img src="docs/ribbon-1.jpg" width="425" title="Ribbon cable"> <img src="docs/ribbon-2.jpg" width="425" title="Ribbon cable - in the container">
+
+And with this complete, I tidied up the wiring, reattached the flush button, mounted the whole unit to the wall, and powered it up:
+
+<img src="docs/mounted-1.jpg" width="425" title="Mounted - 1"> <img src="docs/mounted-2.jpg" width="425" title="Mounted - 2">
 
 ## Code
 See the full Arduino C++ code in [toilet-sensor.ino](toilet-sensor.ino). 
