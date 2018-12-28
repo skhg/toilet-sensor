@@ -1,7 +1,7 @@
 # toilet-sensor
 An Arduino-based toilet cistern monitor.
 
-## Idea
+## Concept
 Sometimes the toilet needs an extra flush, and the cistern takes a while to fill up. How full is it? How long should I wait? 
 
 These are important questions.
@@ -13,6 +13,12 @@ Finally, we have answers.
 Sensor at work:
 
 ![Sensor at work](docs/giphy.gif "Sensor at work")
+
+## Overview
+
+An ultrasound distance sensor is installed within the toilet cistern. It emits ultrasound pulses which are reflected from the water surface and indicate the tank fill level. The sensor is controller by an Arduino microcontroller which reads the data, and generates the "image" to be displayed on the connected 8x8 LED matrix.
+
+![Overview](docs/overview.png "Overview")
 
 ## Materials required
 Electronics:
