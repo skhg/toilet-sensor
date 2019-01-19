@@ -1,3 +1,5 @@
+#include <movingAvg.h>
+
 // User-defined configuration
 
 // Milliseconds ping time when the cistern is full
@@ -7,7 +9,7 @@
 #define bottom 1900
 
 // Milliseconds between pings
-#define sense_frequency 100
+#define sense_frequency 0
 
 
 
@@ -82,6 +84,9 @@ long cyclesInCurrentMode = 0;
 long cyclesSinceLastPulse = 0;
 long duration = 0;
 
+movingAvg avg_long(1000);
+movingAvg avg_short(50);
+
 void setup() {  
   Serial.begin (9600);
   pinMode(trigPin, OUTPUT);
@@ -98,11 +103,19 @@ void setup() {
   pinMode(A3, OUTPUT);
   pinMode(A4, OUTPUT);
   pinMode(A5, OUTPUT);
+
+  avg_long.begin();
+  avg_short.begin();
 }
 
 void loop() {
   if(cyclesSinceLastPulse > currentDelay){
     duration = sense();
+    avg_long.reading(duration);
+    avg_short.reading(duration);
+
+    print_info();
+    
     cyclesSinceLastPulse = 0;
   }else{
     cyclesSinceLastPulse++;
@@ -131,9 +144,12 @@ void drawFillLevel(long duration) {
   drawScreen(toDraw);
 }
 
+void print_info() {
+    Serial.println(duration);
+}
+
 long sense() {
   long duration = pulse();
-  Serial.println(duration);
   return duration;
 }
 
