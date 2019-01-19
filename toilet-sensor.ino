@@ -9,8 +9,10 @@
 #define bottom 1900
 
 // Milliseconds between pings
-#define sense_frequency 0
+#define sense_delay 0
 
+// Milliseconds between display updates
+#define display_delay 20
 
 
 
@@ -79,9 +81,9 @@ const byte TICK[] = {
   B00000000
 };
 
-long currentDelay = sense_frequency;
-long cyclesInCurrentMode = 0;
-long cyclesSinceLastPulse = 0;
+int cyclesSinceLastPulse = 0;
+int cyclesSinceLastDisplayUpdate = 0;
+int displayedValue = 0;
 
 movingAvg SLOW_AVG(1000);
 movingAvg FAST_AVG(50);
@@ -110,7 +112,7 @@ void setup() {
 void loop() {
   int previousSlowAvgValue = SLOW_AVG.getAvg();
   
-  if(cyclesSinceLastPulse > currentDelay){
+  if(cyclesSinceLastPulse > sense_delay){
     long duration = sense();
     FAST_AVG.reading(duration);
     SLOW_AVG.reading(duration);
@@ -127,12 +129,19 @@ void loop() {
   if(SLOW_AVG.getAvg() != previousSlowAvgValue){
     flushing = SLOW_AVG.getAvg() > previousSlowAvgValue;
   }
-  
-  if(flushing) {
-    updateDisplay(FAST_AVG.getAvg());
+
+  if(cyclesSinceLastDisplayUpdate > display_delay){
+    if(flushing) {
+      displayedValue = FAST_AVG.getAvg();
+    }else{
+      displayedValue = SLOW_AVG.getAvg();
+    }
+    cyclesSinceLastDisplayUpdate = 0;
   }else{
-    updateDisplay(SLOW_AVG.getAvg());
+    cyclesSinceLastDisplayUpdate++;
   }
+
+  updateDisplay(displayedValue);
 }
 
 void updateDisplay(long duration) {
