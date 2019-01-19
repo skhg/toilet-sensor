@@ -86,8 +86,6 @@ long cyclesSinceLastPulse = 0;
 movingAvg SLOW_AVG(1000);
 movingAvg FAST_AVG(50);
 
-bool FLUSHING = false;
-
 void setup() {  
   Serial.begin (9600);
   pinMode(trigPin, OUTPUT);
@@ -124,11 +122,13 @@ void loop() {
     cyclesSinceLastPulse++;
   }
 
+  bool flushing;
+  
   if(SLOW_AVG.getAvg() != previousSlowAvgValue){
-    FLUSHING = SLOW_AVG.getAvg() > previousSlowAvgValue;
+    flushing = SLOW_AVG.getAvg() > previousSlowAvgValue;
   }
   
-  if(FLUSHING) {
+  if(flushing) {
     updateDisplay(FAST_AVG.getAvg());
   }else{
     updateDisplay(SLOW_AVG.getAvg());
