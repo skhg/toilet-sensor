@@ -83,8 +83,10 @@ long currentDelay = sense_frequency;
 long cyclesInCurrentMode = 0;
 long cyclesSinceLastPulse = 0;
 
-movingAvg avg_long(1000);
-movingAvg avg_short(50);
+movingAvg SLOW_AVG(1000);
+movingAvg FAST_AVG(50);
+
+bool FLUSHING = false;
 
 void setup() {  
   Serial.begin (9600);
@@ -103,23 +105,34 @@ void setup() {
   pinMode(A4, OUTPUT);
   pinMode(A5, OUTPUT);
 
-  avg_long.begin();
-  avg_short.begin();
+  SLOW_AVG.begin();
+  FAST_AVG.begin();
 }
 
 void loop() {
+  int previousSlowAvgValue = SLOW_AVG.getAvg();
+  
   if(cyclesSinceLastPulse > currentDelay){
     long duration = sense();
-    avg_long.reading(duration);
-    avg_short.reading(duration);
+    FAST_AVG.reading(duration);
+    SLOW_AVG.reading(duration);
 
-    print_info(duration, avg_short, avg_long);
+    print_info(duration, FAST_AVG, SLOW_AVG);
     
     cyclesSinceLastPulse = 0;
   }else{
     cyclesSinceLastPulse++;
   }
-  updateDisplay(avg_long.getAvg());
+
+  if(SLOW_AVG.getAvg() != previousSlowAvgValue){
+    FLUSHING = SLOW_AVG.getAvg() > previousSlowAvgValue;
+  }
+  
+  if(FLUSHING) {
+    updateDisplay(FAST_AVG.getAvg());
+  }else{
+    updateDisplay(SLOW_AVG.getAvg());
+  }
 }
 
 void updateDisplay(long duration) {
@@ -133,7 +146,7 @@ void updateDisplay(long duration) {
 }
 
 void drawFillLevel(long duration) {
-  double range = bottom - top;
+  int range = bottom - top;
   double relativeFill = bottom - duration;
   double fractionalFill = (double)relativeFill/range;
   int filledPixels = fractionalFill * 64;
@@ -148,13 +161,7 @@ void print_info(long duration, movingAvg avg_short, movingAvg avg_long) {
     Serial.print(",");
     Serial.print(avg_short.getAvg());
     Serial.print(",");
-    Serial.print(avg_long.getAvg());
-    Serial.print(",");
-    Serial.println(volatility(avg_long, avg_short));
-}
-
-int volatility(movingAvg a, movingAvg b) {
-  return abs(a.getAvg() - b.getAvg());
+    Serial.println(avg_long.getAvg());
 }
 
 bool inRange(long duration) {
