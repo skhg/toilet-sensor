@@ -82,7 +82,6 @@ const byte TICK[] = {
 long currentDelay = sense_frequency;
 long cyclesInCurrentMode = 0;
 long cyclesSinceLastPulse = 0;
-long duration = 0;
 
 movingAvg avg_long(1000);
 movingAvg avg_short(50);
@@ -110,17 +109,17 @@ void setup() {
 
 void loop() {
   if(cyclesSinceLastPulse > currentDelay){
-    duration = sense();
+    long duration = sense();
     avg_long.reading(duration);
     avg_short.reading(duration);
 
-    print_info();
+    print_info(duration, avg_short, avg_long);
     
     cyclesSinceLastPulse = 0;
   }else{
     cyclesSinceLastPulse++;
   }
-  updateDisplay(duration);
+  updateDisplay(avg_long.getAvg());
 }
 
 void updateDisplay(long duration) {
@@ -144,13 +143,12 @@ void drawFillLevel(long duration) {
   drawScreen(toDraw);
 }
 
-void print_info() {
-    Serial.println(duration);
-}
-
-long sense() {
-  long duration = pulse();
-  return duration;
+void print_info(long duration, movingAvg avg_short, movingAvg avg_long) {
+    Serial.print(duration);
+    Serial.print(",");
+    Serial.print(avg_short.getAvg());
+    Serial.print(",");
+    Serial.println(avg_long.getAvg());
 }
 
 bool inRange(long duration) {
@@ -165,7 +163,7 @@ bool isFull(long duration) {
   return duration < top;
 }
 
-long pulse() {
+long sense() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
