@@ -1,7 +1,7 @@
 // User-defined configuration
 
 // Milliseconds ping time when the cistern is full
-#define top 400
+#define top 420
 
 // Milliseconds ping time when the cistern is empty
 #define bottom 1900
