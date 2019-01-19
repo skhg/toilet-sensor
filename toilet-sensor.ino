@@ -148,7 +148,13 @@ void print_info(long duration, movingAvg avg_short, movingAvg avg_long) {
     Serial.print(",");
     Serial.print(avg_short.getAvg());
     Serial.print(",");
-    Serial.println(avg_long.getAvg());
+    Serial.print(avg_long.getAvg());
+    Serial.print(",");
+    Serial.println(volatility(avg_long, avg_short));
+}
+
+int volatility(movingAvg a, movingAvg b) {
+  return abs(a.getAvg() - b.getAvg());
 }
 
 bool inRange(long duration) {
