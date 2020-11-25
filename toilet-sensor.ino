@@ -51,7 +51,7 @@ const byte rows[] = {
     ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8
 };
 const byte col[] = {
-  COL_1,COL_2, COL_3, COL_4, COL_5, COL_6, COL_7, COL_8
+  COL_1, COL_2, COL_3, COL_4, COL_5, COL_6, COL_7, COL_8
 };
 
 const byte EMPTY[] = {
@@ -83,21 +83,21 @@ const byte TICK[] = {
   B00000000
 };
 
-long currentDelay = sense_frequency;
-long cyclesInCurrentMode = 0;
-long cyclesSinceLastPulse = 0;
-long duration = 0;
+int currentDelay = sense_frequency;
+int cyclesInCurrentMode = 0;
+int cyclesSinceLastPulse = 0;
+int duration = 0;
 
-void setup() {  
-  Serial.begin (9600);
+void setup() {
+  Serial.begin(9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
-  //setup screen
-  for (byte i = 2; i <= 13; i++){
+  // Setup screen
+  for (byte i = 2; i <= 13; i++) {
     pinMode(i, OUTPUT);
-  }  
-  
+  }
+
   pinMode(A0, OUTPUT);
   pinMode(A1, OUTPUT);
   pinMode(A2, OUTPUT);
@@ -107,29 +107,29 @@ void setup() {
 }
 
 void loop() {
-  if(cyclesSinceLastPulse > currentDelay){
+  if (cyclesSinceLastPulse > currentDelay) {
     duration = sense();
     cyclesSinceLastPulse = 0;
-  }else{
+  } else {
     cyclesSinceLastPulse++;
   }
   updateDisplay(duration);
 }
 
-void updateDisplay(long duration) {
-  if(inRange(duration)){
+void updateDisplay(int duration) {
+  if (inRange(duration)) {
     drawFillLevel(duration);
-  }else if(isEmpty(duration)){
+  } else if (isEmpty(duration)) {
     drawScreen(EMPTY);
-  }else if(isFull(duration)){
+  } else if (isFull(duration)) {
     drawScreen(TICK);
   }
 }
 
-void drawFillLevel(long duration) {
+void drawFillLevel(int duration) {
   double range = bottom - top;
   double relativeFill = bottom - duration;
-  double fractionalFill = (double)relativeFill/range;
+  double fractionalFill = relativeFill/range;
   int filledPixels = fractionalFill * 64;
 
   byte toDraw[8];
@@ -137,25 +137,25 @@ void drawFillLevel(long duration) {
   drawScreen(toDraw);
 }
 
-long sense() {
-  long duration = pulse();
+int sense() {
+  int duration = pulse();
   Serial.println(duration);
   return duration;
 }
 
-bool inRange(long duration) {
+bool inRange(int duration) {
   return !isEmpty(duration) && !isFull(duration);
 }
 
-bool isEmpty(long duration) {
+bool isEmpty(int duration) {
   return duration > bottom;
 }
 
-bool isFull(long duration) {
+bool isFull(int duration) {
   return duration < top;
 }
 
-long pulse() {
+int pulse() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -176,7 +176,7 @@ void buildDots(byte *screen, int count) {
     B00000000};
 
   byte FILLER[] = {
-    B00000000, 
+    B00000000,
     B10000000,
     B11000000,
     B11100000,
@@ -187,41 +187,39 @@ void buildDots(byte *screen, int count) {
     B11111111};
 
   // Fill rows bottom to top, as a real toilet does
-  for(int i=7; i>=0; i--){
-    if(count >= 8){
+  for (int i = 7; i >= 0; i--) {
+    if (count >= 8) {
       ROWS[i] = FILLER[8];
       count = count - 8;
-    }else{
+    } else {
       ROWS[i] = FILLER[count];
       count = 0;
-    } 
+    }
   }
 
   copyScreenContents(ROWS, screen);
 }
 
 void copyScreenContents(byte *source, byte *dest) {
-  for(int i=0; i<8; i++){
+  for (int i = 0; i < 8; i++) {
     dest[i] = source[i];
   }
 }
 
-void  drawScreen(const byte buffer2[])
- { 
-   // Turn on each row in series
-    for (byte i = 0; i < 8; i++)        // count next row
-     {
-        digitalWrite(rows[i], HIGH);    //initiate whole row
-        for (byte a = 0; a < 8; a++)    // count next row
-        {
-          // if You set (~buffer2[i] >> a) then You will have positive
-          digitalWrite(col[a], (~buffer2[i] >> a) & 0x01); // initiate whole column
-          
-          delayMicroseconds(50);       // uncoment deley for diferent speed of display
-          
-          digitalWrite(col[a], 1);      // reset whole column
-        }
-        digitalWrite(rows[i], LOW);     // reset whole row
-        // otherwise last row will intersect with next row
+void  drawScreen(const byte buffer2[]) {
+  // Turn on each row in series
+  for (byte i = 0; i < 8; i++) {    // count next row
+    digitalWrite(rows[i], HIGH);    // initiate whole row
+
+    for (byte a = 0; a < 8; a++) {    // count next row
+      // if You set (~buffer2[i] >> a) then You will have positive
+      digitalWrite(col[a], (~buffer2[i] >> a) & 0x01);  // initiate whole column
+
+      delayMicroseconds(50);  // Adjust to suit refresh rate
+
+      digitalWrite(col[a], 1);      // reset whole column
     }
+    digitalWrite(rows[i], LOW);     // reset whole row
+    // otherwise last row will intersect with next row
+  }
 }
