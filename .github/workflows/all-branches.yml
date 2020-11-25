@@ -1,0 +1,31 @@
+name: All Branches
+on: push
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+      - name: Install Arduino tools
+        run: |
+          pip install cpplint
+      - name: Run C++ linter
+        run: |
+          cpplint --extensions=ino *.ino testing/anemometer/**/*.ino testing/sds011/**/*.ino
+
+  test-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Checkout custom WiFi library
+        uses: actions/checkout@v2
+        with:
+          repository: skhg/home_wifi
+          ref: master
+          path: CustomHomeWiFiLibrary # must contain string "Custom"
+      - name: Test compile for Arduino
+        uses: ArminJo/arduino-test-compile@v3
+        with:
+          arduino-board-fqbn: arduino:avr:leonardo
+          sketch-names: "*.ino"

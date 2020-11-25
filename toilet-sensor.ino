@@ -1,3 +1,9 @@
+/**
+ * Copyright 2019 Jack Higgins : https://github.com/skhg
+ * All components of this project are licensed under the MIT License.
+ * See the LICENSE file for details.
+ */
+
 // User-defined configuration
 
 // Milliseconds ping time when the cistern is full
