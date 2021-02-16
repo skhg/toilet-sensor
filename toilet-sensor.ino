@@ -4,16 +4,18 @@
  * See the LICENSE file for details.
  */
 
-// User-defined configuration
+/** 
+ * User-defined configuration section
+ */
 
 // Milliseconds ping time when the cistern is full
-#define top 420
+#define TOP_MILLIS 420
 
 // Milliseconds ping time when the cistern is empty
-#define bottom 1900
+#define BOTTOM_MILLIS 1900
 
 // Milliseconds between pings
-#define sense_frequency 100
+#define SENSE_FREQUENCY 100
 
 
 
@@ -83,10 +85,8 @@ const byte TICK[] = {
   B00000000
 };
 
-int currentDelay = sense_frequency;
-int cyclesInCurrentMode = 0;
-int cyclesSinceLastPulse = 0;
-int duration = 0;
+int _cyclesSinceLastPulse = 0;
+int _duration = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -107,13 +107,13 @@ void setup() {
 }
 
 void loop() {
-  if (cyclesSinceLastPulse > currentDelay) {
-    duration = sense();
-    cyclesSinceLastPulse = 0;
+  if (_cyclesSinceLastPulse > SENSE_FREQUENCY) {
+    _duration = sense();
+    _cyclesSinceLastPulse = 0;
   } else {
-    cyclesSinceLastPulse++;
+    _cyclesSinceLastPulse++;
   }
-  updateDisplay(duration);
+  updateDisplay(_duration);
 }
 
 void updateDisplay(int duration) {
@@ -127,8 +127,8 @@ void updateDisplay(int duration) {
 }
 
 void drawFillLevel(int duration) {
-  double range = bottom - top;
-  double relativeFill = bottom - duration;
+  double range = BOTTOM_MILLIS - TOP_MILLIS;
+  double relativeFill = BOTTOM_MILLIS - duration;
   double fractionalFill = relativeFill/range;
   int filledPixels = fractionalFill * 64;
 
@@ -148,11 +148,11 @@ bool inRange(int duration) {
 }
 
 bool isEmpty(int duration) {
-  return duration > bottom;
+  return duration > BOTTOM_MILLIS;
 }
 
 bool isFull(int duration) {
-  return duration < top;
+  return duration < TOP_MILLIS;
 }
 
 int pulse() {
