@@ -89,7 +89,7 @@ int _cyclesSinceLastPulse = 0;
 int _duration = 0;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
