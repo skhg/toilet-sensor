@@ -97,11 +97,11 @@ movingAvg SLOW_AVG(1000);
 movingAvg FAST_AVG(50);
 
 void setup() {
-  Serial.begin (9600);
+  Serial.begin(9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
-  //setup screen
+  // Setup screen
   for (byte i = 2; i <= 13; i++) {
     pinMode(i, OUTPUT);
   }
@@ -121,7 +121,7 @@ void loop() {
   int previousSlowAvgValue = SLOW_AVG.getAvg();
 
   if (cyclesSinceLastPulse > sense_delay) {
-    long duration = sense();
+    int duration = sense();
     FAST_AVG.reading(duration);
     SLOW_AVG.reading(duration);
 
@@ -152,7 +152,7 @@ void loop() {
   updateDisplay(displayedValue);
 }
 
-void updateDisplay(long duration) {
+void updateDisplay(int duration) {
   if (inRange(duration)) {
     drawFillLevel(duration);
   } else if (isEmpty(duration)) {
@@ -162,10 +162,10 @@ void updateDisplay(long duration) {
   }
 }
 
-void drawFillLevel(long duration) {
+void drawFillLevel(int duration) {
   int range = bottom - top;
   double relativeFill = bottom - duration;
-  double fractionalFill = (double)relativeFill / range;
+  double fractionalFill = relativeFill / range;
   int filledPixels = fractionalFill * 64;
 
   byte toDraw[8];
@@ -173,7 +173,7 @@ void drawFillLevel(long duration) {
   drawScreen(toDraw);
 }
 
-void print_info(long duration, movingAvg avg_short, movingAvg avg_long) {
+void print_info(int duration, movingAvg avg_short, movingAvg avg_long) {
   Serial.print(duration);
   Serial.print(",");
   Serial.print(avg_short.getAvg());
@@ -181,19 +181,19 @@ void print_info(long duration, movingAvg avg_short, movingAvg avg_long) {
   Serial.println(avg_long.getAvg());
 }
 
-bool inRange(long duration) {
+bool inRange(int duration) {
   return !isEmpty(duration) && !isFull(duration);
 }
 
-bool isEmpty(long duration) {
+bool isEmpty(int duration) {
   return duration > bottom;
 }
 
-bool isFull(long duration) {
+bool isFull(int duration) {
   return duration < top;
 }
 
-long sense() {
+int sense() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -246,18 +246,14 @@ void copyScreenContents(byte *source, byte *dest) {
   }
 }
 
-void  drawScreen(const byte buffer2[])
-{
+void  drawScreen(const byte buffer2[]) {
   // Turn on each row in series
-  for (byte i = 0; i < 8; i++)        // count next row
-  {
-    digitalWrite(rows[i], HIGH);    //initiate whole row
-    for (byte a = 0; a < 8; a++)    // count next row
-    {
-      // if You set (~buffer2[i] >> a) then You will have positive
-      digitalWrite(col[a], (~buffer2[i] >> a) & 0x01); // initiate whole column
+  for (byte i = 0; i < 8; i++) {        // count next row
+    digitalWrite(rows[i], HIGH);    // initiate whole row
+    for (byte a = 0; a < 8; a++) {    // count next row
+      digitalWrite(col[a], (~buffer2[i] >> a) & 0x01);  // initiate whole column
 
-      delayMicroseconds(50);       // uncoment deley for diferent speed of display
+      delayMicroseconds(50);
 
       digitalWrite(col[a], 1);      // reset whole column
     }
