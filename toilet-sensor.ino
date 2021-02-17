@@ -9,16 +9,16 @@
 // User-defined configuration
 
 // Milliseconds ping time when the cistern is full
-#define top 420
+#define TOP_MILLIS 420
 
 // Milliseconds ping time when the cistern is empty
-#define bottom 1900
+#define BOTTOM_MILLIS 1900
 
 // Milliseconds between pings
-#define sense_delay 0
+#define SENSE_DELAY_MILLIS 0
 
 // Milliseconds between display updates
-#define display_delay 20
+#define DISPLAY_DELAY_MILLIS 20
 
 
 
@@ -44,8 +44,8 @@
 #define COL_8 A5
 
 // Ultrasound sensor pin locations
-#define trigPin 1
-#define echoPin 0
+#define TRIGGER_PIN 1
+#define ECHO_PIN 0
 
 
 
@@ -89,17 +89,17 @@ const byte TICK[] = {
   B00000000
 };
 
-int cyclesSinceLastPulse = 0;
-int cyclesSinceLastDisplayUpdate = 0;
-int displayedValue = 0;
+int _cyclesSinceLastPulse = 0;
+int _cyclesSinceLastDisplayUpdate = 0;
+int _displayedValue = 0;
 
 movingAvg SLOW_AVG(1000);
 movingAvg FAST_AVG(50);
 
 void setup() {
   Serial.begin(9600);
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  pinMode(TRIGGER_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
 
   // Setup screen
   for (byte i = 2; i <= 13; i++) {
@@ -120,16 +120,16 @@ void setup() {
 void loop() {
   int previousSlowAvgValue = SLOW_AVG.getAvg();
 
-  if (cyclesSinceLastPulse > sense_delay) {
+  if (_cyclesSinceLastPulse > SENSE_DELAY_MILLIS) {
     int duration = sense();
     FAST_AVG.reading(duration);
     SLOW_AVG.reading(duration);
 
     print_info(duration, FAST_AVG, SLOW_AVG);
 
-    cyclesSinceLastPulse = 0;
+    _cyclesSinceLastPulse = 0;
   } else {
-    cyclesSinceLastPulse++;
+    _cyclesSinceLastPulse++;
   }
 
   bool flushing;
@@ -138,18 +138,18 @@ void loop() {
     flushing = SLOW_AVG.getAvg() > previousSlowAvgValue;
   }
 
-  if (cyclesSinceLastDisplayUpdate > display_delay) {
+  if (_cyclesSinceLastDisplayUpdate > DISPLAY_DELAY_MILLIS) {
     if (flushing) {
-      displayedValue = FAST_AVG.getAvg();
+      _displayedValue = FAST_AVG.getAvg();
     } else {
-      displayedValue = SLOW_AVG.getAvg();
+      _displayedValue = SLOW_AVG.getAvg();
     }
-    cyclesSinceLastDisplayUpdate = 0;
+    _cyclesSinceLastDisplayUpdate = 0;
   } else {
-    cyclesSinceLastDisplayUpdate++;
+    _cyclesSinceLastDisplayUpdate++;
   }
 
-  updateDisplay(displayedValue);
+  updateDisplay(_displayedValue);
 }
 
 void updateDisplay(int duration) {
@@ -163,8 +163,8 @@ void updateDisplay(int duration) {
 }
 
 void drawFillLevel(int duration) {
-  int range = bottom - top;
-  double relativeFill = bottom - duration;
+  int range = BOTTOM_MILLIS - TOP_MILLIS;
+  double relativeFill = BOTTOM_MILLIS - duration;
   double fractionalFill = relativeFill / range;
   int filledPixels = fractionalFill * 64;
 
@@ -186,20 +186,20 @@ bool inRange(int duration) {
 }
 
 bool isEmpty(int duration) {
-  return duration > bottom;
+  return duration > BOTTOM_MILLIS;
 }
 
 bool isFull(int duration) {
-  return duration < top;
+  return duration < TOP_MILLIS;
 }
 
 int sense() {
-  digitalWrite(trigPin, LOW);
+  digitalWrite(TRIGGER_PIN, LOW);
   delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
+  digitalWrite(TRIGGER_PIN, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  return pulseIn(echoPin, HIGH);
+  digitalWrite(TRIGGER_PIN, LOW);
+  return pulseIn(ECHO_PIN, HIGH);
 }
 
 void buildDots(byte *screen, int count) {
