@@ -1,8 +1,10 @@
 /**
- * Copyright 2019 Jack Higgins : https://github.com/skhg
+ * Copyright 2019-2021 Jack Higgins : https://github.com/skhg
  * All components of this project are licensed under the MIT License.
  * See the LICENSE file for details.
  */
+
+#include <movingAvg.h>
 
 // User-defined configuration
 
@@ -13,8 +15,10 @@
 #define bottom 1900
 
 // Milliseconds between pings
-#define sense_frequency 100
+#define sense_delay 0
 
+// Milliseconds between display updates
+#define display_delay 20
 
 
 
@@ -48,7 +52,7 @@
 
 
 const byte rows[] = {
-    ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8
+  ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8
 };
 const byte col[] = {
   COL_1, COL_2, COL_3, COL_4, COL_5, COL_6, COL_7, COL_8
@@ -62,7 +66,8 @@ const byte EMPTY[] = {
   B00000000,
   B00000000,
   B00000000,
-  B00000000};
+  B00000000
+};
 const byte X[] = {
   B10000001,
   B01000010,
@@ -71,7 +76,8 @@ const byte X[] = {
   B00011000,
   B00100100,
   B01000010,
-  B10000001};
+  B10000001
+};
 const byte TICK[] = {
   B00000000,
   B00000001,
@@ -83,17 +89,19 @@ const byte TICK[] = {
   B00000000
 };
 
-int currentDelay = sense_frequency;
-int cyclesInCurrentMode = 0;
 int cyclesSinceLastPulse = 0;
-int duration = 0;
+int cyclesSinceLastDisplayUpdate = 0;
+int displayedValue = 0;
+
+movingAvg SLOW_AVG(1000);
+movingAvg FAST_AVG(50);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin (9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
-  // Setup screen
+  //setup screen
   for (byte i = 2; i <= 13; i++) {
     pinMode(i, OUTPUT);
   }
@@ -104,19 +112,47 @@ void setup() {
   pinMode(A3, OUTPUT);
   pinMode(A4, OUTPUT);
   pinMode(A5, OUTPUT);
+
+  SLOW_AVG.begin();
+  FAST_AVG.begin();
 }
 
 void loop() {
-  if (cyclesSinceLastPulse > currentDelay) {
-    duration = sense();
+  int previousSlowAvgValue = SLOW_AVG.getAvg();
+
+  if (cyclesSinceLastPulse > sense_delay) {
+    long duration = sense();
+    FAST_AVG.reading(duration);
+    SLOW_AVG.reading(duration);
+
+    print_info(duration, FAST_AVG, SLOW_AVG);
+
     cyclesSinceLastPulse = 0;
   } else {
     cyclesSinceLastPulse++;
   }
-  updateDisplay(duration);
+
+  bool flushing;
+
+  if (SLOW_AVG.getAvg() != previousSlowAvgValue) {
+    flushing = SLOW_AVG.getAvg() > previousSlowAvgValue;
+  }
+
+  if (cyclesSinceLastDisplayUpdate > display_delay) {
+    if (flushing) {
+      displayedValue = FAST_AVG.getAvg();
+    } else {
+      displayedValue = SLOW_AVG.getAvg();
+    }
+    cyclesSinceLastDisplayUpdate = 0;
+  } else {
+    cyclesSinceLastDisplayUpdate++;
+  }
+
+  updateDisplay(displayedValue);
 }
 
-void updateDisplay(int duration) {
+void updateDisplay(long duration) {
   if (inRange(duration)) {
     drawFillLevel(duration);
   } else if (isEmpty(duration)) {
@@ -126,10 +162,10 @@ void updateDisplay(int duration) {
   }
 }
 
-void drawFillLevel(int duration) {
-  double range = bottom - top;
+void drawFillLevel(long duration) {
+  int range = bottom - top;
   double relativeFill = bottom - duration;
-  double fractionalFill = relativeFill/range;
+  double fractionalFill = (double)relativeFill / range;
   int filledPixels = fractionalFill * 64;
 
   byte toDraw[8];
@@ -137,25 +173,27 @@ void drawFillLevel(int duration) {
   drawScreen(toDraw);
 }
 
-int sense() {
-  int duration = pulse();
-  Serial.println(duration);
-  return duration;
+void print_info(long duration, movingAvg avg_short, movingAvg avg_long) {
+  Serial.print(duration);
+  Serial.print(",");
+  Serial.print(avg_short.getAvg());
+  Serial.print(",");
+  Serial.println(avg_long.getAvg());
 }
 
-bool inRange(int duration) {
+bool inRange(long duration) {
   return !isEmpty(duration) && !isFull(duration);
 }
 
-bool isEmpty(int duration) {
+bool isEmpty(long duration) {
   return duration > bottom;
 }
 
-bool isFull(int duration) {
+bool isFull(long duration) {
   return duration < top;
 }
 
-int pulse() {
+long sense() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -173,7 +211,8 @@ void buildDots(byte *screen, int count) {
     B00000000,
     B00000000,
     B00000000,
-    B00000000};
+    B00000000
+  };
 
   byte FILLER[] = {
     B00000000,
@@ -184,7 +223,8 @@ void buildDots(byte *screen, int count) {
     B11111000,
     B11111100,
     B11111110,
-    B11111111};
+    B11111111
+  };
 
   // Fill rows bottom to top, as a real toilet does
   for (int i = 7; i >= 0; i--) {
@@ -206,16 +246,18 @@ void copyScreenContents(byte *source, byte *dest) {
   }
 }
 
-void  drawScreen(const byte buffer2[]) {
+void  drawScreen(const byte buffer2[])
+{
   // Turn on each row in series
-  for (byte i = 0; i < 8; i++) {    // count next row
-    digitalWrite(rows[i], HIGH);    // initiate whole row
-
-    for (byte a = 0; a < 8; a++) {    // count next row
+  for (byte i = 0; i < 8; i++)        // count next row
+  {
+    digitalWrite(rows[i], HIGH);    //initiate whole row
+    for (byte a = 0; a < 8; a++)    // count next row
+    {
       // if You set (~buffer2[i] >> a) then You will have positive
-      digitalWrite(col[a], (~buffer2[i] >> a) & 0x01);  // initiate whole column
+      digitalWrite(col[a], (~buffer2[i] >> a) & 0x01); // initiate whole column
 
-      delayMicroseconds(50);  // Adjust to suit refresh rate
+      delayMicroseconds(50);       // uncoment deley for diferent speed of display
 
       digitalWrite(col[a], 1);      // reset whole column
     }
