@@ -10,7 +10,7 @@
 // User-defined configuration
 
 // Milliseconds ping time when the cistern is full
-#define TOP_MILLIS 420
+#define TOP_MILLIS 380
 
 // Milliseconds ping time when the cistern is empty
 #define BOTTOM_MILLIS 1900
@@ -21,6 +21,11 @@
 // Milliseconds between display updates
 #define DISPLAY_DELAY_MILLIS 20
 
+/** 
+ * A fraction of the range between top and bottom. When the fast moving average strays outside 
+ * this range (relative to the slow moving average) a flush is detected.
+ */
+#define FLUSH_FACTOR 25
 
 
 
@@ -83,6 +88,7 @@ const byte CHECK_MARK[] = {
 int _cyclesSinceLastPulse = 0;
 int _cyclesSinceLastDisplayUpdate = 0;
 int _displayedValue = 0;
+const int _range = BOTTOM_MILLIS - TOP_MILLIS;
 
 movingAvg SLOW_AVG(1000);
 movingAvg FAST_AVG(50);
@@ -109,13 +115,8 @@ void setup() {
 }
 
 void loop() {
-  int previousSlowAvgValue = SLOW_AVG.getAvg();
-
   takeReading();
-
-  bool flushing = detectFlush(previousSlowAvgValue);
-
-  chooseDisplayableValue(flushing);
+  chooseDisplayableValue();
   updateDisplay(_displayedValue);
 }
 
@@ -123,9 +124,9 @@ void loop() {
  * During a flush, we want to update the level more frequently. We can choose to use
  * the less accurate "fast" moving average for this.
  */
-void chooseDisplayableValue(bool isFlushing) {
+void chooseDisplayableValue() {
   if (_cyclesSinceLastDisplayUpdate > DISPLAY_DELAY_MILLIS) {
-    if (isFlushing) {
+    if (detectFlush()) {
       _displayedValue = FAST_AVG.getAvg();
     } else {
       _displayedValue = SLOW_AVG.getAvg();
@@ -136,16 +137,11 @@ void chooseDisplayableValue(bool isFlushing) {
   }
 }
 
-/**
- * If the value of the "slow" moving average is increasing, it likely means that the
- * cistern is emptying, indicating a flush.
- */
-bool detectFlush(int previousSlowAvgValue) {
-  if (SLOW_AVG.getAvg() != previousSlowAvgValue) {
-    return SLOW_AVG.getAvg() > previousSlowAvgValue;
-  }
+bool detectFlush() {
+  int fastAvg = FAST_AVG.getAvg();
+  int slowAvg = SLOW_AVG.getAvg();
 
-  return true;
+  return fastAvg > slowAvg && fastAvg > (slowAvg + flushBound());
 }
 
 /**
@@ -182,9 +178,8 @@ void updateDisplay(int duration) {
  * Converts the level value to a pixel array
  */
 void renderFillLevel(int duration, byte *toDraw) {
-  int range = BOTTOM_MILLIS - TOP_MILLIS;
   double relativeFill = BOTTOM_MILLIS - duration;
-  double fractionalFill = relativeFill / range;
+  double fractionalFill = relativeFill / _range;
   int filledPixels = fractionalFill * 64;
 
   buildDots(toDraw, filledPixels);
@@ -195,7 +190,15 @@ void print_info(int duration, movingAvg avg_short, movingAvg avg_long) {
   Serial.print(",");
   Serial.print(avg_short.getAvg());
   Serial.print(",");
-  Serial.println(avg_long.getAvg());
+  Serial.print(avg_long.getAvg());
+  Serial.print(",");
+  Serial.print(avg_long.getAvg() + flushBound());
+  Serial.print(",");
+  Serial.println(avg_long.getAvg() - flushBound());
+}
+
+int flushBound() {
+  return _range / FLUSH_FACTOR;
 }
 
 bool inRange(int duration) {
