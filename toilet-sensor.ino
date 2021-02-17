@@ -2,6 +2,9 @@
  * Copyright 2019-2021 Jack Higgins : https://github.com/skhg
  * All components of this project are licensed under the MIT License.
  * See the LICENSE file for details.
+ * 
+ * Portions of this code were sourced from the Arduino Project Hub at:
+ * https://create.arduino.cc/projecthub/SAnwandter1/programming-8x8-led-matrix-23475a
  */
 
 // User-defined configuration
@@ -66,7 +69,7 @@ const byte EMPTY[] = {
   B00000000
 };
 
-const byte TICK[] = {
+const byte CHECK_MARK[] = {
   B00000000,
   B00000001,
   B00000010,
@@ -146,7 +149,7 @@ void updateDisplay(int duration) {
   } else if (isEmpty(duration)) {
     drawScreen(EMPTY);
   } else if (isFull(duration)) {
-    drawScreen(TICK);
+    drawScreen(CHECK_MARK);
   }
 }
 
@@ -234,7 +237,7 @@ void copyScreenContents(byte *source, byte *dest) {
   }
 }
 
-void  drawScreen(const byte buffer2[]) {
+void drawScreen(const byte buffer2[]) {
   // Turn on each row in series
   for (byte i = 0; i < 8; i++) {        // count next row
     digitalWrite(rows[i], HIGH);    // initiate whole row
