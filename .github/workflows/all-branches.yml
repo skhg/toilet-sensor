@@ -22,4 +22,5 @@ jobs:
         uses: ArminJo/arduino-test-compile@v3
         with:
           arduino-board-fqbn: arduino:avr:leonardo
+          required-libraries: movingAvg
           sketch-names: "*.ino"
