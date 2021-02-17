@@ -119,6 +119,10 @@ void loop() {
   updateDisplay(_displayedValue);
 }
 
+/**
+ * During a flush, we want to update the level more frequently. We can choose to use
+ * the less accurate "fast" moving average for this.
+ */
 void chooseDisplayableValue(bool isFlushing) {
   if (_cyclesSinceLastDisplayUpdate > DISPLAY_DELAY_MILLIS) {
     if (isFlushing) {
@@ -132,6 +136,10 @@ void chooseDisplayableValue(bool isFlushing) {
   }
 }
 
+/**
+ * If the value of the "slow" moving average is increasing, it likely means that the
+ * cistern is emptying, indicating a flush.
+ */
 bool detectFlush(int previousSlowAvgValue) {
   if (SLOW_AVG.getAvg() != previousSlowAvgValue) {
     return SLOW_AVG.getAvg() > previousSlowAvgValue;
@@ -140,6 +148,10 @@ bool detectFlush(int previousSlowAvgValue) {
   return true;
 }
 
+/**
+ * Take a reading when needed in the cycle, print the latest value and that of the moving
+ * averages, useful for calibration/debugging purposes
+ */
 void takeReading() {
   if (_cyclesSinceLastPulse > SENSE_DELAY_MILLIS) {
     int duration = sense();
@@ -166,6 +178,9 @@ void updateDisplay(int duration) {
   }
 }
 
+/**
+ * Converts the level value to a pixel array
+ */
 void renderFillLevel(int duration, byte *toDraw) {
   int range = BOTTOM_MILLIS - TOP_MILLIS;
   double relativeFill = BOTTOM_MILLIS - duration;
