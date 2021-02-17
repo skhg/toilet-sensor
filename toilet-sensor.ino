@@ -111,6 +111,36 @@ void setup() {
 void loop() {
   int previousSlowAvgValue = SLOW_AVG.getAvg();
 
+  takeReading();
+
+  bool flushing = detectFlush(previousSlowAvgValue);
+
+  chooseDisplayableValue(flushing);
+  updateDisplay(_displayedValue);
+}
+
+void chooseDisplayableValue(bool isFlushing) {
+  if (_cyclesSinceLastDisplayUpdate > DISPLAY_DELAY_MILLIS) {
+    if (isFlushing) {
+      _displayedValue = FAST_AVG.getAvg();
+    } else {
+      _displayedValue = SLOW_AVG.getAvg();
+    }
+    _cyclesSinceLastDisplayUpdate = 0;
+  } else {
+    _cyclesSinceLastDisplayUpdate++;
+  }
+}
+
+bool detectFlush(int previousSlowAvgValue) {
+  if (SLOW_AVG.getAvg() != previousSlowAvgValue) {
+    return SLOW_AVG.getAvg() > previousSlowAvgValue;
+  }
+
+  return true;
+}
+
+void takeReading() {
   if (_cyclesSinceLastPulse > SENSE_DELAY_MILLIS) {
     int duration = sense();
     FAST_AVG.reading(duration);
@@ -122,30 +152,13 @@ void loop() {
   } else {
     _cyclesSinceLastPulse++;
   }
-
-  bool flushing;
-
-  if (SLOW_AVG.getAvg() != previousSlowAvgValue) {
-    flushing = SLOW_AVG.getAvg() > previousSlowAvgValue;
-  }
-
-  if (_cyclesSinceLastDisplayUpdate > DISPLAY_DELAY_MILLIS) {
-    if (flushing) {
-      _displayedValue = FAST_AVG.getAvg();
-    } else {
-      _displayedValue = SLOW_AVG.getAvg();
-    }
-    _cyclesSinceLastDisplayUpdate = 0;
-  } else {
-    _cyclesSinceLastDisplayUpdate++;
-  }
-
-  updateDisplay(_displayedValue);
 }
 
 void updateDisplay(int duration) {
   if (inRange(duration)) {
-    drawFillLevel(duration);
+    byte pixels[8];
+    renderFillLevel(duration, pixels);
+    drawScreen(pixels);
   } else if (isEmpty(duration)) {
     drawScreen(EMPTY);
   } else if (isFull(duration)) {
@@ -153,15 +166,13 @@ void updateDisplay(int duration) {
   }
 }
 
-void drawFillLevel(int duration) {
+void renderFillLevel(int duration, byte *toDraw) {
   int range = BOTTOM_MILLIS - TOP_MILLIS;
   double relativeFill = BOTTOM_MILLIS - duration;
   double fractionalFill = relativeFill / range;
   int filledPixels = fractionalFill * 64;
 
-  byte toDraw[8];
   buildDots(toDraw, filledPixels);
-  drawScreen(toDraw);
 }
 
 void print_info(int duration, movingAvg avg_short, movingAvg avg_long) {
@@ -237,12 +248,16 @@ void copyScreenContents(byte *source, byte *dest) {
   }
 }
 
-void drawScreen(const byte buffer2[]) {
+/**
+ * Originally from:
+ * https://create.arduino.cc/projecthub/SAnwandter1/programming-8x8-led-matrix-23475a
+ */
+void drawScreen(const byte pixelBuffer[]) {
   // Turn on each row in series
   for (byte i = 0; i < 8; i++) {        // count next row
     digitalWrite(rows[i], HIGH);    // initiate whole row
     for (byte a = 0; a < 8; a++) {    // count next row
-      digitalWrite(col[a], (~buffer2[i] >> a) & 0x01);  // initiate whole column
+      digitalWrite(col[a], (~pixelBuffer[i] >> a) & 0x01);  // initiate the col
 
       delayMicroseconds(50);
 
