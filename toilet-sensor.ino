@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-#include <movingAvg.h>
-
 // User-defined configuration
 
 // Milliseconds ping time when the cistern is full
@@ -23,7 +21,9 @@
 
 
 
-// Fixed system configuration
+// System configuration
+
+#include <movingAvg.h>
 
 // 8x8 LED pin locations
 #define ROW_1 8
@@ -47,10 +47,7 @@
 #define TRIGGER_PIN 1
 #define ECHO_PIN 0
 
-
-
-
-
+// Pixel locations
 const byte rows[] = {
   ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8
 };
@@ -68,16 +65,7 @@ const byte EMPTY[] = {
   B00000000,
   B00000000
 };
-const byte X[] = {
-  B10000001,
-  B01000010,
-  B00100100,
-  B00011000,
-  B00011000,
-  B00100100,
-  B01000010,
-  B10000001
-};
+
 const byte TICK[] = {
   B00000000,
   B00000001,
